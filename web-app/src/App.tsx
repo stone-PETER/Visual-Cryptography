@@ -2,12 +2,16 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import Login from './pages/login'
+import Register from './pages/register'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
+    <Login></Login>
+    <Register></Register>
       <div className="qr">
         <a href="upi://pay?pa=jdhanay13@oksbi&pn=Dhanay%20J&am=150.00&cu=INR&aid=uGICAgMDYmbi0QQ">Hello</a>
       </div>

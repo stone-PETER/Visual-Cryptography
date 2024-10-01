@@ -1,5 +1,7 @@
+import React from 'react'
 import './styles.css'
-export default function Register() {
+
+export const Register = () => {
   return (
     <div className="signup-container">
       <h2>Create Account</h2>
@@ -38,9 +40,12 @@ export default function Register() {
           Sign Up
         </button>
       </form>
-      <a href="login.html" className="login-link">
+      <a href="/login" className="login-link">
         Already have an account? Login
       </a>
     </div>
-  );
+  )
 }
+
+
+export default Register;

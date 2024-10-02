@@ -34,15 +34,8 @@ def decrypt(shares):
 if __name__ == "__main__":
     
   qr()
-    
-  share_size = int(sys.argv[1])
-  try:
-     if share_size < 2 or share_size > 8:
-      print("Share size must be between 2 and 8")
-      raise ValueError
-  except ValueError:
-    print("Input is not a valid integer!")
-    exit(0)
+  
+  share_size = 2
 
   # create a folder to store output images
   if not os.path.isdir("Output"):

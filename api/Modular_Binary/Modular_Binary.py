@@ -1,8 +1,8 @@
 import numpy as np
 from PIL import Image
-from qr_code import qr
+from Modular_Binary.qr_code import qr
 import sys, getopt
-import performance
+from Modular_Binary import performance
 
 import os,errno
 import glob
@@ -31,18 +31,9 @@ def decrypt(shares):
     return output_image, final_output
 
 
-if __name__ == "__main__":
-    
-  qr()
-    
-  share_size = int(sys.argv[1])
-  try:
-     if share_size < 2 or share_size > 8:
-      print("Share size must be between 2 and 8")
-      raise ValueError
-  except ValueError:
-    print("Input is not a valid integer!")
-    exit(0)
+def modularBinary(a):    
+  input_image=qr(a)
+  share_size = 2
 
   # create a folder to store output images
   if not os.path.isdir("Output"):
@@ -64,16 +55,16 @@ if __name__ == "__main__":
     for f in files:
       os.remove(f)
 
-    try:
-        input_image = Image.open('qrcode.png')
+    # try:
+    #     input_image = Image.open('qrcode.png')
 
-    except FileNotFoundError:
-        print("Input file not found!")
-        exit(0)
+    # except FileNotFoundError:
+    #     print("Input file not found!")
+    #     exit(0)
 
-    print("Image uploaded successfully!")
-    print("Input image size (in pixels) : ", input_image.size)   
-    print("Number of shares image = ", share_size)
+    # print("Image uploaded successfully!")
+    # print("Input image size (in pixels) : ", input_image.size)   
+    # print("Number of shares image = ", share_size)
 
     shares, input_matrix = encrypt(input_image, share_size)
 
@@ -89,9 +80,9 @@ if __name__ == "__main__":
 
     print("Evaluation metrics : ")
     MSE = performance.MSE("./Output/Input_MA.png", "./Output/Output_MA.png")
-    print("MSE = " + str(MSE))
+    # print("MSE = " + str(MSE))
     PSNR = performance.PSNR("./Output/Input_MA.png", "./Output/Output_MA.png")
-    print("PSNR = " + str(PSNR))
+    # print("PSNR = " + str(PSNR))
     
     img=cv.imread("Output/Input_MA.png",0)
     img1=cv.imread('Output/Output_MA.png',0)
@@ -99,22 +90,23 @@ if __name__ == "__main__":
     fig = plt.figure()
 
     # show original image
-    fig.add_subplot(221)
-    plt.title('Original Image')
-    plt.set_cmap('gray')
-    plt.imshow(img)
+    # fig.add_subplot(221)
+    # plt.title('Original Image')
+    # plt.set_cmap('gray')
+    # plt.imshow(img)
 
-    fig.add_subplot(222)
-    plt.title('Histogram ')
-    plt.hist(img,10)
+    # fig.add_subplot(222)
+    # plt.title('Histogram ')
+    # plt.hist(img,10)
 
-    fig.add_subplot(223)
-    plt.title('Decrypted Image')
-    plt.set_cmap('gray')
-    plt.imshow(img1)
+    # fig.add_subplot(223)
+    # plt.title('Decrypted Image')
+    # plt.set_cmap('gray')
+    # plt.imshow(img1)
 
-    fig.add_subplot(224)
-    plt.title('Histogram')
-    plt.hist(img1,10)
+    # fig.add_subplot(224)
+    # plt.title('Histogram')
+    # plt.hist(img1,10)
 
-    plt.show()
+    # plt.show()
+# modularBinary()

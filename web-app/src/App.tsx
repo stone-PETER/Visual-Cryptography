@@ -1,38 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import MerchantHome from './pages/MerchantHome.tsx';
+import ProtectedRoute from './utils/ProtectedRoute';
+// import ProtectedRoute from './components/ProtectedRoute';
+// import {auth} from './utils/FireBaseConfig.tsx';
+// import { useEffect, useState } from 'react';
+import Header from './components/Header';
+import { store } from './utils/store.tsx';
+import { Provider } from 'react-redux'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  
   return (
     <>
-      <div className="qr">
-        <a href="upi://pay?pa=jdhanay13@oksbi&pn=Dhanay%20J&am=150.00&cu=INR&aid=uGICAgMDYmbi0QQ">Hello</a>
-      </div>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    
+    <Provider store={store}>
+      <Header/>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+
+            <Route path='/user' element={
+              <ProtectedRoute>
+                <MerchantHome/>
+              </ProtectedRoute>
+            }/>
+
+          <Route path="/register" element={<Register />} />
+        </Routes>
+
+      </Router>
+    </Provider>
+
     </>
-  )
+  );
 }
 
-export default App
+export default App;

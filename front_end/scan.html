@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .topbar {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        video {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        canvas {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        #qr-result {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="home.html">Back</a>
+        <h2>Scan QR Code</h2>
+    </div>
+
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div id="qr-result"></div>
+
+    <!-- Include jsQR Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    
+    <script>
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let qrResult = document.getElementById('qr-result');
+        let context = canvas.getContext('2d');
+        let scanning = false;
+
+        // Access the device camera and stream to the video element
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+            video.srcObject = stream;
+            video.setAttribute("playsinline", true); // Ensures iOS Safari plays video inline
+            scanning = true;
+            requestAnimationFrame(tick);
+        }).catch(function(err) {
+            alert('Error accessing camera: ' + err.message);
+        });
+
+        function tick() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                let code = jsQR(imageData.data, canvas.width, canvas.height, {
+                    inversionAttempts: "dontInvert",
+                });
+
+                if (code) {
+                    drawLine(code.location.topLeftCorner, code.location.topRightCorner, "red");
+                    drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "red");
+                    drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "red");
+                    drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "red");
+
+                    qrResult.innerText = `QR Code: ${code.data}`;
+                    scanning = false;
+
+                    // Stop video streaming
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
+            }
+
+            if (scanning) {
+                requestAnimationFrame(tick);
+            }
+        }
+
+        function drawLine(begin, end, color) {
+            context.beginPath();
+            context.moveTo(begin.x, begin.y);
+            context.lineTo(end.x, end.y);
+            context.lineWidth = 4;
+            context.strokeStyle = color;
+            context.stroke();
+        }
+    </script>
+
+</body>
+</html>

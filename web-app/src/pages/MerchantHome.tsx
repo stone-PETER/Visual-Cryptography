@@ -7,6 +7,7 @@ import axios from 'axios';
 const MerchantHome = () => {
   const [upiID, setUpiID] = useState('');
   const { user } = useSelector((state) => state);
+  const [decryptedData, setDecryptedData] = useState('');
 
   const [amount, setAmount] = useState('');
   const [qrCodeShare, setQRCodeShare] = useState(null);
@@ -34,6 +35,20 @@ const MerchantHome = () => {
       console.error('Error getting UPI ID:', error);
     }
   };
+
+  const goToPay = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/decrypt-url', {
+        qr_image: qrCodeShare
+      });
+      
+      // Assuming the response contains decrypted URL
+      setDecryptedData(response.data.url);
+    } catch (err) {
+      setError('Failed to decrypt the QR code.');
+      console.error(err);
+    }
+  }
 
   const generateQRCode = async () => {
     setLoading(true);
@@ -100,13 +115,19 @@ const MerchantHome = () => {
           {error && <p className="error">{error}</p>}
           {qrCodeShare ? (
             <div>
-              <p>QR Code Share (2nd share):</p>
-              <img sizes='54x54' src={qrCodeShare} alt="QR Code Share" />
+              <p>QR Code Share:</p>
+              <img style={{width:'128px', height:'128px'}} id="qr" src={qrCodeShare} alt="QR Code Share" />
+              <button onClick={goToPay} style={{margin:"10px"}}>Go To Pay</button>
             </div>
           ) : (
             <p>QR Code Share Space</p>
           )}
         </div>
+        {decryptedData && (
+        <div>
+          <h3>Decrypted Data: {decryptedData}</h3>
+        </div>
+        )}
       </div>
     </>
   );

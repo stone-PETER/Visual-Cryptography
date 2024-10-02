@@ -58,10 +58,11 @@ def generate_qr():
 
     # Save first share to Firebase Storage (server-side)
     share1 = Image.fromarray(shares[:,:,0].astype(np.uint8) * 255)
-    share1_io = BytesIO()
-    # share1.save('test__2.png', 'PNG')
-    share1.save(share1_io, 'PNG')
-    share1_io.seek(0)
+    share1.save('Share_1.png', 'PNG')
+    # share1_io = BytesIO()
+    # # share1.save('test__2.png', 'PNG')
+    # share1.save(share1_io, 'PNG')
+    # share1_io.seek(0)
 
     # blob1 = bucket.blob(f"qr_codes/qr_{amount}_share_1.png")
     # blob1.upload_from_file(share1_io, content_type='image/png')
@@ -74,11 +75,11 @@ def generate_qr():
     share2_base64 = base64.b64encode(share2_io.getvalue()).decode('utf-8')
 
     # Save metadata to Firestore
-    db.collection('qr_codes').add({
-        'amount': amount,
-        'share1_path': f"qr_codes/qr_{amount}_share_1.png",
-        'timestamp': firestore.SERVER_TIMESTAMP
-    })
+    # db.collection('qr_codes').add({
+    #     'amount': amount,
+    #     'share1_path': f"qr_codes/qr_{amount}_share_1.png",
+    #     'timestamp': firestore.SERVER_TIMESTAMP
+    # })
 
     # Return only the second share to frontend
     response = {
@@ -86,6 +87,28 @@ def generate_qr():
     }
 
     return jsonify(response)
+
+@app.route('/decrypt-url', methods=['POST'])
+def decrypt_url():
+    data = request.json
+    # qr_id = data.get('qr_id')
+
+    data = data['qr_image']
+    if not data:
+        return jsonify({'error': 'QR ID is required'}), 400
+    print(data)
+
+    image = Image.open(BytesIO(base64.b64decode(data.split(',')[1])))
+    share1 = Image.open('Share_1.png')
+
+    op, f_image = decrypt((image, share1))
+
+    op.save('op.png')
+    f_image.save('fi.png')
+
+    return jsonify({'data': 'success'})
+    # return jsonify({'data': decrypted_data})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

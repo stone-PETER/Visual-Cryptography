@@ -31,10 +31,8 @@ def decrypt(shares):
     return output_image, final_output
 
 
-if __name__ == "__main__":
-    
-  qr()
-  
+def modularBinary(a):    
+  input_image=qr(a)
   share_size = 2
 
   # create a folder to store output images
@@ -57,12 +55,12 @@ if __name__ == "__main__":
     for f in files:
       os.remove(f)
 
-    try:
-        input_image = Image.open('qrcode.png')
+    # try:
+    #     input_image = Image.open('qrcode.png')
 
-    except FileNotFoundError:
-        print("Input file not found!")
-        exit(0)
+    # except FileNotFoundError:
+    #     print("Input file not found!")
+    #     exit(0)
 
     print("Image uploaded successfully!")
     print("Input image size (in pixels) : ", input_image.size)   
@@ -111,3 +109,4 @@ if __name__ == "__main__":
     plt.hist(img1,10)
 
     plt.show()
+modularBinary(2)

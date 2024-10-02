@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Register from './pages/Register';
-import Login from './pages/Login';
+import Home from './pages/home';
+import Register from './pages/register';
+import Login from './pages/login';
 import UserHome from './pages/UserHome';
 import ProtectedRoute from './utils/ProtectedRoute';
 // import ProtectedRoute from './components/ProtectedRoute';
